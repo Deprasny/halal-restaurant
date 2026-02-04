@@ -2,12 +2,25 @@
 
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { getHalalIconSvg, HALAL_STATUS_COLORS } from "@/lib/halal-icons";
 import type {
 	HalalStatus,
 	RestaurantWithDistance,
 } from "@/lib/types/restaurant";
+
+const LIGHT_TILES = [
+	"https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+	"https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+	"https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+];
+
+const DARK_TILES = [
+	"https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+	"https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+	"https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+];
 
 interface RestaurantMapProps {
 	restaurants: RestaurantWithDistance[];
@@ -24,8 +37,11 @@ export function RestaurantMap({
 	const map = useRef<maplibregl.Map | null>(null);
 	const markers = useRef<maplibregl.Marker[]>([]);
 	const [mapLoaded, setMapLoaded] = useState(false);
+	const { resolvedTheme } = useTheme();
 
-	// Initialize map
+	const isDark = resolvedTheme === "dark";
+
+	// Initialize map (only once)
 	useEffect(() => {
 		if (!mapContainer.current || map.current) return;
 
@@ -34,22 +50,19 @@ export function RestaurantMap({
 			style: {
 				version: 8,
 				sources: {
-					osm: {
+					carto: {
 						type: "raster",
-						tiles: [
-							"https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-							"https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
-							"https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-						],
+						tiles: LIGHT_TILES,
 						tileSize: 256,
-						attribution: "&copy; OpenStreetMap contributors",
+						attribution:
+							'&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 					},
 				},
 				layers: [
 					{
-						id: "osm",
+						id: "carto",
 						type: "raster",
-						source: "osm",
+						source: "carto",
 					},
 				],
 			},
@@ -68,6 +81,17 @@ export function RestaurantMap({
 			map.current = null;
 		};
 	}, [userLocation.latitude, userLocation.longitude]);
+
+	// Update tiles when theme changes
+	useEffect(() => {
+		if (!map.current || !mapLoaded) return;
+
+		const source = map.current.getSource("carto") as maplibregl.RasterTileSource;
+		if (source) {
+			const tiles = isDark ? DARK_TILES : LIGHT_TILES;
+			source.setTiles(tiles);
+		}
+	}, [isDark, mapLoaded]);
 
 	// Update markers when restaurants change
 	useEffect(() => {

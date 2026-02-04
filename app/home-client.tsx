@@ -8,6 +8,7 @@ import {
 	RestaurantDetail,
 	RestaurantList,
 } from "@/components/restaurant";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { FavoritesProvider } from "@/contexts/favorites-context";
 import { useGeolocation } from "@/hooks/use-geolocation";
@@ -76,9 +77,12 @@ export function HomeClient({ restaurants, groupCounts }: HomeClientProps) {
 					<div className="h-full w-[380px] max-w-[calc(100vw-48px)] bg-background gm-shadow-lg flex flex-col">
 						{/* Header */}
 						<header className="p-4 border-b border-border">
-							<h1 className="text-xl font-semibold text-foreground">
-								Halal Korea
-							</h1>
+							<div className="flex items-center justify-between">
+								<h1 className="text-xl font-semibold text-foreground">
+									Halal Korea
+								</h1>
+								<ThemeToggle />
+							</div>
 							<p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
 								<MapPin className="h-3.5 w-3.5" />
 								{loading

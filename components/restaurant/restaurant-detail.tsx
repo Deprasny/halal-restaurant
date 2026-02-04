@@ -69,7 +69,7 @@ export function RestaurantDetail({
 						<Button
 							variant="ghost"
 							size="icon"
-							className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm"
+							className="absolute top-3 left-3 h-9 w-9 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm"
 							onClick={() => toggleFavorite(restaurant.id)}
 						>
 							<Heart
@@ -85,7 +85,7 @@ export function RestaurantDetail({
 						<Button
 							variant="ghost"
 							size="icon"
-							className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm"
+							className="absolute top-3 left-3 h-9 w-9 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm"
 							onClick={() => toggleFavorite(restaurant.id)}
 						>
 							<Heart
